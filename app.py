@@ -11,16 +11,11 @@ app = Flask(__name__)
 ###############
 
 def getMessage(data):
-    return [
-        {
-            "timestamp": data['created_at'],
-            "title": f"{data['action']} ({data['resource']})",
-        },
-        {
-            "title": "data",
-            "description": json.dumps(data['data']),
-        },
-    ]
+    return {
+        "timestamp": data['created_at'],
+        "title": f"{data['action']} ({data['resource']})",
+        "description": json.dumps(data['data']),
+    }
 
 
 @app.route('/<id>/<token>', methods=['POST'])
@@ -28,9 +23,9 @@ def respond(id, token):
     url = f"https://discordapp.com/api/webhooks/{id}/{token}"
 
     try:
-        embeds = getMessage(request.json)
+        embed = getMessage(request.json)
     except Exception as e:
-        embeds = {
+        embed = {
             "title": "Error on webhook",
             "description": str(e),
         }
@@ -38,7 +33,7 @@ def respond(id, token):
     data = {
         "username": "Heroku",
         "avatar_url": "https://www.herokucdn.com/favicons/favicon.ico",
-        "embeds": embeds,
+        "embeds": [embed],
     }
 
     r = requests.post(url, json=data)
