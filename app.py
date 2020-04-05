@@ -10,22 +10,35 @@ app = Flask(__name__)
 # The request #
 ###############
 
+def getMessage(data):
+    return [
+        {
+            "timestamp": data['created_at'],
+            "title": f"{data['action']} ({data['resource']})",
+        },
+        {
+            "title": "data",
+            "description": json.dumps(data['data']),
+        },
+    ]
+
+
 @app.route('/<id>/<token>', methods=['POST'])
 def respond(id, token):
     url = f"https://discordapp.com/api/webhooks/{id}/{token}"
 
     try:
-        petition = json.loads(request.body)
-        message = request.body
+        embeds = getMessage(request.json)
     except Exception as e:
-        message = f"Error on webhook: {e}"
+        embeds = {
+            "title": "Error on webhook",
+            "description": str(e),
+        }
 
     data = {
         "username": "Heroku",
         "avatar_url": "https://www.herokucdn.com/favicons/favicon.ico",
-        "embeds": [{
-            "description": message,
-        }],
+        "embeds": embeds,
     }
 
     r = requests.post(url, json=data)
