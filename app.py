@@ -41,8 +41,7 @@ app.config['TRAP_HTTP_EXCEPTIONS'] = True
 
 @app.errorhandler(Exception)
 def page_not_found(e):
-    # note that we set the 404 status explicitly
-    return 'Invalid request, for more information go to the <a href="https://github.com/TrianguloY">GitHub page</a>', 404
+    return 'Invalid request, for more information go to the <a href="https://github.com/TrianguloY/webhook-discord">GitHub page</a>', 404
 
 
 ########
