@@ -19,7 +19,8 @@ def valid(id, token):
         # if error, show generic
         embed = {
             "title": "Error on webhook",
-            "description": f"{e}\n{request.data}",
+            "url": "https://github.com/TrianguloY/webhook-discord/issues",
+            "description": f"Click to open bot page.\nException: {e}\nFull response: {request.data}",
         }
 
     # create and send
@@ -43,7 +44,7 @@ def heroku2Discord(eJson):
         "author": {
             "name": eJson['actor:email'],
         },
-        "title": f"[{eJson['data:app:name']}] {eJson['action']} ({eJson['resource']})",
+        "title": f"[{eJson['data:app:name']}] {eJson['resource']}: {eJson['action']}",
         "url": f"https://{eJson['data:app:name']}.herokuapp.com",
         "timestamp": eJson['created_at'],
     }
@@ -106,8 +107,7 @@ class ExtendedJson:
             if param in item:
                 item = item[param]
             else:
-                item = f"-No '{param}' in object: {item}-"
-                break
+                raise KeyError(f"-No '{param}' while getting '{names}'-")
         return item
 
 
