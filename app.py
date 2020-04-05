@@ -33,7 +33,7 @@ def valid(id, token):
     # return same response
     return r.content, r.status_code, r.headers.items()
 
-
+Error
 def heroku2Discord(eJson):
     """
     converts a heroku webhook payload to a discord webhook embed
