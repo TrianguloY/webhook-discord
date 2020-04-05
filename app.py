@@ -1,3 +1,5 @@
+import json
+
 import requests
 from flask import Flask, request
 
@@ -13,7 +15,7 @@ def respond(id, token):
     url = f"https://discordapp.com/api/webhooks/{id}/{token}"
 
     try:
-        embed = convertToEmbed(request.json)
+        embed = convertToEmbed(json.loads(request.json))
     except Exception as e:
         embed = {
             "title": "Error on webhook",
@@ -31,10 +33,13 @@ def respond(id, token):
 
 
 def convertToEmbed(payload):
+    """
+    converts a heroku webhook payload to a discord webhook embed
+    """
     result = {
         "author": {
             "name": payload['data']['app']['name'],
-            "url": f"{payload['data']['app']['name']}.herokuapp.com",
+            "url": f"https://{payload['data']['app']['name']}.herokuapp.com",
         },
         "timestamp": payload['created_at'],
         "title": f"{payload['action']} ({payload['resource']})",
@@ -42,41 +47,31 @@ def convertToEmbed(payload):
     }
 
     if payload['resource'] == 'dyno':
-        result['fields'].append({
-            "name": "State",
-            "value": payload['data']['state'],
-        })
+        result['fields'].append(field("State", payload['data']['state']))
 
     if payload['resource'] == 'build':
-        result['fields'].append({
-            "name": "Status",
-            "value": payload['data']['status'],
-        })
-        result['fields'].append({
-            "name": "User",
-            "value": payload['data']['user']['email'],
-        })
+        result['fields'].append(field("Status", payload['data']['status']))
+        result['fields'].append(field("User", payload['data']['user']['email']))
 
     if payload['resource'] == 'release':
         result['description'] = payload['data']['description']
-        result['fields'].append({
-            "name": "Version",
-            "value": payload['data']['version'],
-        })
-        result['fields'].append({
-            "name": "Status",
-            "value": payload['data']['status'],
-        })
-        result['fields'].append({
-            "name": "Current",
-            "value": payload['data']['current'],
-        })
-        result['fields'].append({
-            "name": "User",
-            "value": payload['data']['user']['email'],
-        })
+        result['fields'].append(field("Version", payload['data']['version']))
+        result['fields'].append(field("Current", payload['data']['current']))
+        result['fields'].append(field("Status", payload['data']['status']))
+        result['fields'].append(field("User", payload['data']['user']['email']))
 
     return result
+
+
+def field(name, value):
+    """
+    utility to build a field
+    """
+    return {
+        "name": name,
+        "value": str(value),
+        "inline": True,
+    }
 
 
 ###################
