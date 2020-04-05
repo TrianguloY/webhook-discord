@@ -1,5 +1,3 @@
-import json
-
 import requests
 from flask import Flask, request
 
@@ -15,7 +13,7 @@ def respond(id, token):
     url = f"https://discordapp.com/api/webhooks/{id}/{token}"
 
     try:
-        embed = convertToEmbed(json.loads(request.json))
+        embed = convertToEmbed(request.json)
     except Exception as e:
         embed = {
             "title": "Error on webhook",
