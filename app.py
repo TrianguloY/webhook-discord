@@ -41,10 +41,10 @@ def heroku2Discord(eJson):
     # common object
     result = {
         "author": {
-            "name": f"App: {eJson['data:app:name']}",
-            "url": f"https://{eJson['data:app:name']}.herokuapp.com",
+            "name": eJson['actor:email'],
         },
-        "title": f"{eJson['action']} ({eJson['resource']})",
+        "title": f"[{eJson['data:app:name']}] {eJson['action']} ({eJson['resource']})",
+        "url": f"https://{eJson['data:app:name']}.herokuapp.com",
         "timestamp": eJson['created_at'],
     }
 
@@ -53,7 +53,7 @@ def heroku2Discord(eJson):
         if 'fields' not in result: result['fields'] = []
         result['fields'].append({
             "name": name,
-            "value": str(eJson[names]),
+            "value": eJson[names],
             "inline": True,
         })
 

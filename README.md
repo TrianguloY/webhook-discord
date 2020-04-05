@@ -5,7 +5,7 @@ Discord is a client webhook, meaning you can send messages to a channel without 
 Github and Heroku are webhook servers, meaning they will send notifications of certain events. ([Github-webhooks](https://developer.github.com/webhooks/)) ([Heroku-webhooks](https://devcenter.heroku.com/categories/app-webhooks))  
 
 This also means you can 'connect' a webhook server with a webhook client to send notifications, however the data sent by the server can (and in almost all cases is) different, meaning if you directly connect both it will probably not work. For this you need a middleware, a server that converts the server message into the client format.  
-Discord has [built-in middlewares for Github](https://support.discordapp.com/hc/es/articles/228383668-Usando-Webhooks) and a few others, so you don't need any special tratment to connect Github and discord; however for other services, in this case Heroku, this middleware isn't available (or I couldn't find one) so I created my own. This app is just a middle server that converts Heroku webhook events into Discord webhook events, to be notified of Heroku changes directly from Discord. The app is also hosted on Heroku if you want to test it directly.
+Discord has [built-in middlewares for Github](https://support.discordapp.com/hc/es/articles/228383668-Usando-Webhooks) and a few others, so you don't need any special treatment to connect Github and discord; however for other services, in this case Heroku, this middleware isn't available (or I couldn't find one) so I created my own. This app is just a middle server that converts Heroku webhook events into Discord webhook events, to be notified of Heroku changes directly from Discord. The app is also hosted on Heroku if you want to test it directly.
 
 ## Usage:
 * Create a discord webhook (from a channel: edit channel->Webhooks->create). You should get a url with this format: `https://discordapp.com/api/webhooks/<id>/<key>` 
@@ -22,7 +22,7 @@ This app is hosted on Heroku, meaning you can follow the steps in 'Usage' to tes
 
 ## Deploy custom server
 If you want to deploy your own copy for personal use, just:
-1) Fork the proyect (or copy/paste it, but forking is nicer and it will automatically comply with the license, otherwise you need to mention me).
+1) Fork the project (or copy/paste it, but forking is nicer and it will automatically comply with the license, otherwise you need to mention me).
 1) Deploy your fork to Heroku or any other web service. The app is ready-to-deploy on Heroku, but it is just a Flask one-file app so other services should be fine.
 1) Use your own url for the webhooks. In the second step of 'Usage' simply use your deployment url instead of mine.
 
