@@ -8,61 +8,12 @@ app = Flask(__name__)
 # The request #
 ###############
 
-def getEmbed(data):
-    result = {
-        "author": {
-            "name": data['app']['name'],
-            "url": f"{data['app']['name']}.herokuapp.com",
-        },
-        "timestamp": data['created_at'],
-        "title": f"{data['action']} ({data['resource']})",
-        "fields": [],
-    }
-
-    if data['resource'] == 'dyno':
-        result['fields'].append({
-            "name": "State",
-            "value": data['data']['state'],
-        })
-
-    if data['resource'] == 'build':
-        result['fields'].append({
-            "name": "Status",
-            "value": data['data']['status'],
-        })
-        result['fields'].append({
-            "name": "User",
-            "value": data['data']['user']['email'],
-        })
-
-    if data['resource'] == 'release':
-        result['description'] = data['data']['description']
-        result['fields'].append({
-            "name": "Version",
-            "value": data['data']['version'],
-        })
-        result['fields'].append({
-            "name": "Status",
-            "value": data['data']['status'],
-        })
-        result['fields'].append({
-            "name": "Current",
-            "value": data['data']['current'],
-        })
-        result['fields'].append({
-            "name": "User",
-            "value": data['data']['user']['email'],
-        })
-
-    return result
-
-
 @app.route('/<id>/<token>', methods=['POST'])
 def respond(id, token):
     url = f"https://discordapp.com/api/webhooks/{id}/{token}"
 
     try:
-        embed = getEmbed(request.json)
+        embed = convertToEmbed(request.json)
     except Exception as e:
         embed = {
             "title": "Error on webhook",
@@ -77,6 +28,55 @@ def respond(id, token):
 
     r = requests.post(url, json=data)
     return r.content, r.status_code, r.headers.items()
+
+
+def convertToEmbed(payload):
+    result = {
+        "author": {
+            "name": payload['data']['app']['name'],
+            "url": f"{payload['data']['app']['name']}.herokuapp.com",
+        },
+        "timestamp": payload['created_at'],
+        "title": f"{payload['action']} ({payload['resource']})",
+        "fields": [],
+    }
+
+    if payload['resource'] == 'dyno':
+        result['fields'].append({
+            "name": "State",
+            "value": payload['data']['state'],
+        })
+
+    if payload['resource'] == 'build':
+        result['fields'].append({
+            "name": "Status",
+            "value": payload['data']['status'],
+        })
+        result['fields'].append({
+            "name": "User",
+            "value": payload['data']['user']['email'],
+        })
+
+    if payload['resource'] == 'release':
+        result['description'] = payload['data']['description']
+        result['fields'].append({
+            "name": "Version",
+            "value": payload['data']['version'],
+        })
+        result['fields'].append({
+            "name": "Status",
+            "value": payload['data']['status'],
+        })
+        result['fields'].append({
+            "name": "Current",
+            "value": payload['data']['current'],
+        })
+        result['fields'].append({
+            "name": "User",
+            "value": payload['data']['user']['email'],
+        })
+
+    return result
 
 
 ###################
