@@ -1,10 +1,10 @@
 # Heroku to Discord webhook middleware
 
-Webhooks are a very powerful tool that allows you to receive notifications from events in a service (for server webhooks) or receive notifications from events in a service (for client webhooks). For example:  
+Webhooks are a very powerful tool that allows you to send notifications from events in a service (for server webhooks) or receive notifications from events in a service (for client webhooks). For example:  
 Discord is a client webhook, meaning you can send messages to a channel without even needing a bot. ([Discord-webhooks](https://discordapp.com/developers/docs/resources/webhook))  
 Github and Heroku are webhook servers, meaning they will send notifications of certain events. ([Github-webhooks](https://developer.github.com/webhooks/)) ([Heroku-webhooks](https://devcenter.heroku.com/categories/app-webhooks))  
 
-This also means you can 'connect' a webhook server with a webhook client to send notifications, however the data sent by the server can (and in almost all cases is) different, meaning if you directly connect both it will probably not work. For this you need a middleware, a server that converts the server message into the client format.  
+This also means you can 'connect' a webhook server with a webhook client to send notifications, however the data sent by the server can be (and in almost all cases is) different, meaning if you directly connect both it will probably not work. For this you need a middleware, a server that converts the server message into the client format.  
 Discord has [built-in middlewares for Github](https://support.discordapp.com/hc/es/articles/228383668-Usando-Webhooks) and a few others, so you don't need any special treatment to connect Github and discord; however for other services, in this case Heroku, this middleware isn't available (or I couldn't find one) so I created my own. This app is just a middle server that converts Heroku webhook events into Discord webhook events, to be notified of Heroku changes directly from Discord. The app is also hosted on Heroku if you want to test it directly.
 
 ## Usage:
@@ -28,3 +28,6 @@ If you want to deploy your own copy for personal use, just:
 
 ## Contributions
 Although this project was made for personal use, if you want to send pull requests or make/suggest changes I'll be happy to discuss them. The conversion was manually made so it may not have all type of events into consideration.
+
+## Disclaimer
+This app is not affiliated with nor endorsed by [Heroku](https://www.heroku.com/home) nor [Discord](https://discordapp.com/). The names, logos and services belongs to their respective owners.
