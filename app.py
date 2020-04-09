@@ -1,3 +1,6 @@
+import colorsys
+import hashlib
+
 import requests
 from flask import Flask, request
 
@@ -39,42 +42,51 @@ def heroku2Discord(eJson):
     converts a heroku webhook payload to a discord webhook embed
     """
 
-    # common object
-    result = {
-        "author": {
-            "name": eJson['actor:email'],
-        },
-        "title": f"[{eJson['data:app:name']}] {eJson['resource']}: {eJson['action']}",
-        "url": f"https://{eJson['data:app:name']}.herokuapp.com",
-        "timestamp": eJson['created_at'],
-    }
+    # elements
+    resource = eJson['resource']
+    title = f"[{eJson['data:app:name']}] {resource}"
+    author = eJson['actor:email']
+    description = None
+    fields = []
 
     # Adds a field to the object
     def field(name, names):
-        if 'fields' not in result: result['fields'] = []
-        result['fields'].append({
+        fields.append({
             "name": name,
             "value": eJson[names],
             "inline": True,
         })
 
-    # check each event
+    # detail for each event
+    if resource == 'dyno':
+        title += f" {eJson['data:state']}"
 
-    if eJson['resource'] == 'dyno':
-        field("State", 'data:state')
+    elif resource == 'build':
+        title += f" {eJson['data:status']}"
+        author = eJson['data:user:email']
 
-    if eJson['resource'] == 'build':
-        field("Status", 'data:status')
-        field("User", 'data:user:email')
-
-    if eJson['resource'] == 'release':
-        result['description'] = eJson['data:description']
+    elif resource == 'release':
+        title += f" {eJson['data:status']}"
+        description = eJson['data:description']
+        author = eJson['data:user:email']
         field("Version", 'data:version')
         field("Current", 'data:current')
-        field("Status", 'data:status')
-        field("User", 'data:user:email')
 
-    return result
+    else:  # default
+        title += f"-{eJson['action']}"
+
+    # embed
+    return {
+        "color": uniqueColor(resource),
+        "author": {
+            "name": author,
+        },
+        "title": title,
+        "url": f"https://{eJson['data:app:name']}.herokuapp.com",
+        "description": description,
+        "fields": fields,
+        "timestamp": eJson['created_at'],
+    }
 
 
 ###################
@@ -109,6 +121,17 @@ class ExtendedJson:
             else:
                 raise KeyError(f"-No '{param}' while getting '{names}'-")
         return item
+
+
+def uniqueColor(string):
+    """
+    Returns a color from the string.
+    Same strings will return same colors, different strings will return different colors ('randomly' different)
+    Internal: string =md5(x)=> hex =x/maxhex=> float [0-1] =hsv_to_rgb(x,1,1)=> rgb =rgb_to_int=> int
+    :param string: input string
+    :return: int color
+    """
+    return sum(round(c * 255) << d for c, d in zip(colorsys.hsv_to_rgb(int(hashlib.md5(string.encode('utf-8')).hexdigest(), 16) / 2 ** 128, 1, 1), [16, 8, 0]))
 
 
 ########
