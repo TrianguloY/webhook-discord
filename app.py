@@ -18,6 +18,8 @@ def valid(id, token):
     try:
         # convert from heroku to discord
         embed = heroku2Discord(ExtendedJson(request.json))
+        # ignore message
+        if embed is None: return '', 204
     except Exception as e:
         # if error, show generic
         embed = {
@@ -62,11 +64,15 @@ def heroku2Discord(eJson):
         title += f" {eJson['data:state']}"
 
     elif resource == 'build':
-        title += f" {eJson['data:status']}"
+        status = eJson['data:status']
+        if status == 'pending': status = "in progress"  # specific rename
+        title += f" {status}"
         author = eJson['data:user:email']
 
     elif resource == 'release':
-        title += f" {eJson['data:status']}"
+        status = eJson['data:status']
+        if status == 'succeeded' and eJson['action'] == 'update': return  # specific ignore
+        title += f" {status}"
         description = eJson['data:description']
         author = eJson['data:user:email']
         field("Version", 'data:version')
