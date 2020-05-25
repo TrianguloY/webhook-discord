@@ -31,7 +31,7 @@ def valid(id, token):
     # create and send
     data = {
         "username": "Heroku",
-        "avatar_url": "https://avatars.io/twitter/heroku",
+        "avatar_url": "https://www.herokucdn.com/favicons/apple-touch-icon-152x152.png",
         "embeds": [embed],
     }
     r = requests.post(url, json=data)
