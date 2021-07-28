@@ -17,6 +17,8 @@ you should write
 `https://webhook-discord.herokuapp.com/123456789012345678/qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnmqwertyuiopasdfgh`  
 This will use my deployed server as a middleware (details in 'Sample server'). If you want to deploy your own server check 'Deploy custom server'.
 
+New: If you access the url from your browser, a button will be displayed to send a 'test' message and check if the url is valid. Please note that once configured you don't need to access the browser for anything, Heroku is the one sending the messages.
+
 ## Sample server
 This app is hosted on Heroku, meaning you can follow the steps in 'Usage' to test directly. However note that the app is hosted on a free account, so it may take a few seconds to wake up, and also it may be abused in which case I will turn it off. Also note that although the app doesn't save/record any data (and I promise I will never do it), Heroku might save and keep a log of the petitions, so better not use it for sensible data. The sample server is: `https://webhook-discord.herokuapp.com/`
 
